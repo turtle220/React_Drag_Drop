@@ -1,160 +1,176 @@
-import React, { useState } from "react";
-import { ReactSortable } from "react-sortablejs";
-import styled from "styled-components";
 import "./styles.css";
-
-const StyledBlockWrapper = styled.div`
-  position: relative;
-  background: white;
-  padding: 20px;
-  margin-bottom: 10px;
-  border: 1px solid lightgray;
-  border-radius: 4px;
-  cursor: move;
-  &:hover {
-    //background: #eeeeee;
-  }
-`;
-
-const sortableOptions = {
-  animation: 150,
-  fallbackOnBody: true,
-  swapThreshold: 0.65,
-  ghostClass: "ghost",
-  group: "shared",
-  forceFallback: true
-};
-
-export default function App() {
-  const [blocks, setBlocks] = useState([
+import { Table, Modal } from "antd";
+import "antd/dist/antd.css";
+import Sortable from "sortablejs";
+import { ReactSortable } from "react-sortablejs";
+import React from "react";
+const confirm = Modal.confirm;
+class App extends React.Component {
+  columns = [
     {
-      id: 1,
-      content: "item 1",
-      parent_id: null,
-      type: "container",
-      children: [
-        {
-          id: 2,
-          content: "item 2",
-          width: 3,
-          type: "text",
-          parent_id: 1
-        },
-        {
-          id: 3,
-          content: "item 3",
-          width: 3,
-          type: "text",
-          parent_id: 1
-        }
-      ]
+      title: "姓名",
+      dataIndex: "name",
+      key: "name"
     },
     {
-      id: 4,
-      content: "item 2",
-      parent_id: null,
-      type: "container",
-      children: [
-        {
-          id: 5,
-          content: "item 5",
-          width: 3,
-          parent_id: 2,
-          type: "container",
-          children: [
-            { id: 8, content: "item 8", width: 6, type: "text", parent_id: 5 },
-            { id: 9, content: "item 9", width: 6, type: "text", parent_id: 5 }
-          ]
-        },
-        {
-          id: 6,
-          content: "item 6",
-          width: 2,
-          type: "text",
-          parent_id: 2
-        },
-        {
-          id: 7,
-          content: "item 7",
-          width: 2,
-          type: "text",
-          parent_id: 2
-        }
-      ]
+      title: "年龄",
+      dataIndex: "age",
+      key: "age"
+    },
+    {
+      title: "住址",
+      dataIndex: "address",
+      key: "address"
     }
-  ]);
+  ];
 
-  return (
-    <div>
-      <ReactSortable style={{display: 'flex'}} list={blocks} setList={setBlocks} {...sortableOptions}>
-        {blocks.map((block, blockIndex) => (
-          <BlockWrapper
-            key={block.id}
-            block={block}
-            blockIndex={[blockIndex]}
-            setBlocks={setBlocks}
-          />
-        ))}
-      </ReactSortable>
-    </div>
-  );
-}
-function Container({ block, blockIndex, setBlocks }) {
-  return (
-    <>
-      <ReactSortable
-        key={block.id}
-        list={block.children}
-        setList={(currentList) => {
-          setBlocks((sourceList) => {
-            const tempList = [...sourceList];
-            const _blockIndex = [...blockIndex];
-            const lastIndex = _blockIndex.pop();
-            const lastArr = _blockIndex.reduce(
-              (arr, i) => arr[i]["children"],
-              tempList
-            );
-            console.log(lastIndex);
-            lastArr[lastIndex]["children"] = currentList;
-            return tempList;
+  state = {
+    dataSource: [
+      {
+        key: "1",
+        name: "胡彦斌",
+        age: 32,
+        address: "西湖区湖底公园1号"
+      },
+      {
+        key: "2",
+        name: "胡彦祖",
+        age: 42,
+        address: "西湖区湖底公园1号"
+      }
+    ]
+  };
+  myEleRef = React.createRef();
+  tableRef = (ref) => {
+    console.log(ref);
+  };
+  componentDidMount() {
+    const el = document.querySelector(".ant-table-tbody");
+    new Sortable(el, {
+      sort: false,
+      draggable: ".ant-table-row",
+      handle: ".ant-table-row",
+      ghostClass: "sortable-ghost", // 排序镜像class,就是当鼠标拉起拖拽节点的时候添加该class
+      chosenClass: "sortable-chosen", // //为拖拽的节点添加一个class 开始拖拽鼠标按下去的时候 添加该class
+      setData: function (dataTransfer) {
+        dataTransfer.setData("Text", "");
+      },
+      group: {
+        name: "shared",
+        pull: true,
+        put: false // 不允许拖拽进这个列表
+      },
+      animation: 150,
+
+      onMove: () => {},
+      onEnd: (ev) => {
+        console.log(ev);
+        confirm({
+          title: `确定要aa吗？`,
+          content: "",
+          okText: "确定",
+          cancelText: "取消",
+          onOk: () => {
+            console.log("ok");
+          },
+          onCancel: () => {
+            console.log("cancel");
+          }
+        });
+      },
+      onUpdate: (ev) => {
+        console.log(ev);
+      }
+    });
+    new Sortable(this.myEleRef.current, {
+      group: {
+        name: "shared",
+        put: (a) => {
+          console.log(a);
+
+          confirm({
+            title: "确定吗",
+            onOk: () => {
+              // a.nativeDraggable = true;
+              return true;
+            },
+            onCancel: () => {
+              return false;
+              // a.nativeDraggable = false;
+            }
           });
-        }}
-        {...sortableOptions}
-      >
-        {block.children &&
-          block.children.map((childBlock, index) => {
-            return (
-              <BlockWrapper
-                key={childBlock.id}
-                block={childBlock}
-                blockIndex={[...blockIndex, index]}
-                setBlocks={setBlocks}
-              />
-            );
-          })}
-      </ReactSortable>
-    </>
-  );
-}
-function BlockWrapper({ block, blockIndex, setBlocks }) {
-  // console.log(block);
-  if (!block) return null;
-  if (block.type === "container") {
+          console.log(this);
+          return true;
+          // return a.nativeDraggable;
+        }
+      },
+      onUpdate: (ev) => {},
+      onRemove: (ev) => {
+        console.log("ev", ev);
+        console.log("开始拖动");
+        return false;
+        console.log(ev);
+      }
+    });
+    Sortable.create(el, {
+      sort: true,
+      scroll: true,
+      delay: 10,
+      animation: 150,
+      draggable: ".ant-table-row",
+      handle: ".ant-table-row",
+      dataIdAttr: "class",
+      ghostClass: "sortable-ghost", // 排序镜像class,就是当鼠标拉起拖拽节点的时候添加该class
+      chosenClass: "sortable-chosen", // //为拖拽的节点添加一个class 开始拖拽鼠标按下去的时候 添加该class
+      setData: function (dataTransfer) {
+        dataTransfer.setData("Text", "");
+      },
+      // 拖拽结束执行,evt执向拖拽的参数
+      onEnd: (evt) => {
+        console.log(evt);
+      }
+    });
+    console.log(Sortable);
+  }
+  antdconfirm = () => {
+    return new Promise((resolve, reject) => {
+      confirm({
+        title: `确定要aa吗？`,
+
+        content: "",
+
+        okText: "确定",
+
+        cancelText: "取消",
+
+        onOk: () => {
+          resolve("ok");
+        },
+        onCancel: () => {
+          resolve("cancel");
+        }
+      });
+    });
+  };
+  handleClick = async () => {
+    await this.antdconfirm();
+    return false;
+  };
+  render() {
     return (
-      <StyledBlockWrapper className="block">
-        container: {block.content}
-        <Container
-          block={block}
-          setBlocks={setBlocks}
-          blockIndex={blockIndex}
-        />
-      </StyledBlockWrapper>
-    );
-  } else {
-    return (
-      <StyledBlockWrapper className="block">
-        text: {block.content}
-      </StyledBlockWrapper>
+      <div className="App">
+        <Table
+          dataSource={this.state.dataSource}
+          columns={this.columns}
+        ></Table>
+        <div
+          className="ele"
+          ref={this.myEleRef}
+          onClick={this.handleClick}
+        ></div>
+      </div>
     );
   }
 }
+
+export default App;
