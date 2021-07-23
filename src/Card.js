@@ -98,13 +98,13 @@ class Card extends React.Component {
     this.setState({openCard: false})
     e.stopPropagation();
   }
-  removeCard = (e, index) => {
+  removeCardElement = (e, index) => {
     const cardID = document.getElementById(index);
     cardID.classList.remove("card-s")
     cardID.classList.add("card-h")
     e.stopPropagation();
   }
-  
+
   render() {
     return (
       <div className='wrap'>
@@ -142,7 +142,7 @@ class Card extends React.Component {
           }}>
           <>
           {this.state.data.map((item, index) => (
-            <div className='list-wrapper'>
+            <div key={item.id} className='list-wrapper'>
               <div className='item' key={item.id}>
                 <div className='item-header'>{item.title}</div>
                 <div className='list-cards'>
@@ -174,7 +174,7 @@ class Card extends React.Component {
                       <div style={{display: 'flex'}}>
                         <button onClick={(e) => this.addCardElement(e, index, item.id)} className="add-card-button">ADD CARD</button>
                         <div style={{width:'2%'}}></div>
-                        <button onClick={(e) => {return this.removeCard(e, item.id)}} style={{cursor: 'pointer'}}>Cancel</button>
+                        <button onClick={(e) => {return this.removeCardElement(e, item.id)}} style={{cursor: 'pointer'}}>Cancel</button>
                       </div>
                     </div>
                   </div>
