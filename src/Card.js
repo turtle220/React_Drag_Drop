@@ -7,6 +7,9 @@ class Card extends React.Component {
     super();
     this.state = {
       on: true,
+      openCard: true,
+      elementValue: "",
+      title: "",
       data: [
         {
           title: 'Card1',
@@ -76,11 +79,32 @@ class Card extends React.Component {
   }
 
   listToggle = () => {
-    this.setState({on: !this.state.on})    
+    this.setState({on: !this.state.on})
   }
   addList = () => {
-    
+    const listTitle = document.getElementById("list-title").value;
+    const id = this.state.data.length + 1
+    this.setState({title: listTitle})
+    this.state.data.push({title: listTitle, id: id, slist:[]})
   }
+  addCard = (e, index) => {
+    const cardID = document.getElementById(index);
+    cardID.classList.remove("card-h")
+    cardID.classList.add("card-s")
+    e.stopPropagation();
+  }
+  addCardElement = (e, index, itemID) => {
+    this.state.data[index].slist.push({name: this.state.elementValue, id:""})
+    this.setState({openCard: false})
+    e.stopPropagation();
+  }
+  removeCard = (e, index) => {
+    const cardID = document.getElementById(index);
+    cardID.classList.remove("card-s")
+    cardID.classList.add("card-h")
+    e.stopPropagation();
+  }
+  
   render() {
     return (
       <div className='wrap'>
@@ -94,7 +118,11 @@ class Card extends React.Component {
                 <div className="list-cards" style={{paddingBottom: '4%'}}>
                   <div className="s-list">
                     <div className="s-item">
-                      <input style={{outline: 'none', paddingLeft: '3%', width: '95%', height:'40px', paddingLeft:'3%'}} placeholder="Enter a list title"></input>
+                      <input
+                        id="list-title"
+                        style={{outline: 'none', paddingLeft: '3%', width: '95%', height:'40px', paddingLeft:'3%'}} 
+                        placeholder="Enter a list title"
+                      ></input>
                     </div>
                   </div>
                   <button className="add-list-button" onClick={this.addList}>Add list</button>
@@ -106,7 +134,7 @@ class Card extends React.Component {
         <ReactSortable
           list={this.state.data}
           animation={300}
-          delay={2}
+          delay={0}
           group={{ name: 's', pull: true }}
           className='list'
           setList={(newList) => {
@@ -138,6 +166,19 @@ class Card extends React.Component {
                       </div>
                     ))}
                   </ReactSortable>
+                </div>
+                <div onClick={(e)=>{this.addCard(e, item.id)}} className="add-card">
+                  <div id={item.id} className="card-h">
+                    <div>
+                      <textarea onChange={e => this.setState({elementValue: e.target.value})} style={{width: '98%'}}></textarea>
+                      <div style={{display: 'flex'}}>
+                        <button onClick={(e) => this.addCardElement(e, index, item.id)} className="add-card-button">ADD CARD</button>
+                        <div style={{width:'2%'}}></div>
+                        <button onClick={(e) => {return this.removeCard(e, item.id)}} style={{cursor: 'pointer'}}>Cancel</button>
+                      </div>
+                    </div>
+                  </div>
+                  <div>+ Add a card</div>
                 </div>
               </div>
             </div>

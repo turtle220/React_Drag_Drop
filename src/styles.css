@@ -22,6 +22,55 @@ html {
   padding: 10px;
   user-select: none;
 }
+.add-card {
+  border-radius: 3px;
+  color: #5e6c84;
+  display: block;
+  flex: 1 0 auto;
+  margin: 2px 0 8px 8px;
+  padding: 4px 8px;
+  position: relative;
+  text-decoration: none;
+  -webkit-user-select: none;
+  user-select: none;
+  cursor: pointer;
+}
+.card-s {
+  display: flex;
+  outline: none;
+  background-color: #fff;
+  border-radius: 3px;
+  box-shadow: 0 1px 0 rgb(9 30 66 / 25%);
+  cursor: pointer;
+  display: block;
+  margin-bottom: 8px;
+  max-width: 300px;
+  min-height: 45px;
+  position: relative;
+  text-decoration: none;
+  z-index: 0;
+  padding: 2%;
+  width: 90%;
+}
+
+.add-card-button {
+  height: 30px;
+  width: 45%;
+  cursor: pointer;
+  text-decoration: none;
+  background-color: #b80c4d;
+  border: #2e6da4;
+  font-family: Arial, Geneva, Arial, Helvetica, sans-serif;
+  font-size: 15px;
+  color: #fff;
+  letter-spacing: 1px;
+  /* padding: 8px 12px; */
+  font-size: 14px;
+  font-weight: normal;
+  border-radius: 4px;
+  line-height: 1.5;
+  text-decoration: none;
+}
 .add-list-card {
   height: 15%;
   display: grid;
@@ -68,7 +117,9 @@ html {
   cursor: pointer;
   border: 1px solid;
 }
-
+.card-h {
+  display: none;
+}
 .title {
   overflow: hidden;
   display: -webkit-box;
